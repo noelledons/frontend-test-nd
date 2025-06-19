@@ -1,6 +1,18 @@
 // src/utils/dataUtils.ts
 import { SaleRecord, FilterState, DashboardMetrics, MonthlyData, CategoryData, RegionData } from '../types';
 
+// Function to floating numbets to 2 decimal places
+const roundNumber = (num: number): number => Math.round(num * 100) / 100;
+
+//currency
+  export const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
 export const applyFilters = (data: SaleRecord[], filters: FilterState): SaleRecord[] => {
   return data.filter(record => {
     const recordDate = new Date(record.date);
@@ -20,7 +32,7 @@ export const applyFilters = (data: SaleRecord[], filters: FilterState): SaleReco
     // Search filter
     if (filters.searchTerm) {
       const searchLower = filters.searchTerm.toLowerCase();
-      const matchesSearch = 
+      const matchesSearch =
         record.customerName.toLowerCase().includes(searchLower) ||
         record.productName.toLowerCase().includes(searchLower) ||
         record.salesRep.toLowerCase().includes(searchLower);
@@ -38,16 +50,16 @@ export const calculateMetrics = (data: SaleRecord[]): DashboardMetrics => {
 
   // Find top performing month
   const monthlyTotals = data.reduce((acc, record) => {
-    const month = new Date(record.date).toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long' 
+    const month = new Date(record.date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long'
     });
     acc[month] = (acc[month] || 0) + record.totalAmount;
     return acc;
   }, {} as Record<string, number>);
 
   const topPerformingMonth = Object.entries(monthlyTotals)
-    .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
+    .sort(([, a], [, b]) => b - a)[0]?.[0] || 'N/A';
 
   return {
     totalSales,
@@ -59,21 +71,25 @@ export const calculateMetrics = (data: SaleRecord[]): DashboardMetrics => {
 
 export const getMonthlyData = (data: SaleRecord[]): MonthlyData[] => {
   const monthlyData = data.reduce((acc, record) => {
-    const month = new Date(record.date).toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short' 
+    const month = new Date(record.date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short'
     });
     acc[month] = (acc[month] || 0) + record.totalAmount;
     return acc;
   }, {} as Record<string, number>);
 
-  return Object.entries(monthlyData)
-    .map(([month, sales]) => ({
+  return Object.entries(monthlyData).map(([month, sales]) => {
+    
+    const roundedSales = roundNumber(sales)
+    return {
       name: month,
-      value: sales,
+      value: roundedSales,
       month,
-      sales
-    }))
+      sales: roundedSales
+
+    }
+  })
     .sort((a, b) => new Date(a.month + ' 1, 2024').getTime() - new Date(b.month + ' 1, 2024').getTime());
 };
 
@@ -87,18 +103,20 @@ export const getCategoryData = (data: SaleRecord[]): CategoryData[] => {
     return acc;
   }, {} as Record<string, { revenue: number; orders: number }>);
 
-  return Object.entries(categoryData).map(([category, data]) => ({
-    name: category,
-    value: data.revenue,
+  return Object.entries(categoryData).map(([category, data]) => { 
+    const roundedCategoryData = roundNumber(data.revenue)
+    return {  name: category,
+    value: roundedCategoryData,
     category,
-    revenue: data.revenue,
-    orders: data.orders
-  }));
+    revenue: roundedCategoryData,
+    orders: data.orders}
+  
+  });
 };
 
 export const getRegionData = (data: SaleRecord[]): RegionData[] => {
   const totalRevenue = data.reduce((sum, record) => sum + record.totalAmount, 0);
-  
+
   const regionData = data.reduce((acc, record) => {
     acc[record.region] = (acc[record.region] || 0) + record.totalAmount;
     return acc;
@@ -112,3 +130,5 @@ export const getRegionData = (data: SaleRecord[]): RegionData[] => {
     percentage: totalRevenue > 0 ? (revenue / totalRevenue) * 100 : 0
   }));
 };
+
+

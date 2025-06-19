@@ -1,6 +1,9 @@
-import React from 'react';
-import { Card } from '../ui/Card';
-import { LucideIcon } from 'lucide-react';
+import React from "react";
+import { Card } from "../ui/Card";
+import {
+  LucideIcon,
+
+} from "lucide-react";
 
 interface MetricCardProps {
   title: string;
@@ -18,9 +21,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   title,
   value,
   icon: Icon,
-  iconColor = 'text-blue-600',
+  iconColor = "text-blue-600",
   trend,
-  formatValue
+  formatValue,
 }) => {
   const displayValue = formatValue ? formatValue(value) : value;
 
@@ -31,8 +34,14 @@ export const MetricCard: React.FC<MetricCardProps> = ({
           <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
           <p className="text-2xl font-bold text-gray-900">{displayValue}</p>
           {trend && (
-            <div className={`flex items-center mt-2 text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-              <span>{trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%</span>
+            <div
+              className={`flex items-center mt-2 text-sm ${
+                trend.isPositive ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              <span>
+                {trend.isPositive ? "↗" : "↘"} {Math.abs(trend.value)}%
+              </span>
             </div>
           )}
         </div>

@@ -21,9 +21,9 @@ export const useFilters = (data: SaleRecord[]) => {
   );
 
   const hasActiveFilters = useMemo(() => {
-    return filters.searchTerm || 
-           filters.dateRange.startDate || 
-           filters.dateRange.endDate ||
+    return Boolean(filters.searchTerm) || 
+           Boolean(filters.dateRange.startDate) || 
+           Boolean (filters.dateRange.endDate) ||
            filters.categories.length > 0 ||
            filters.regions.length > 0;
   }, [filters]);
