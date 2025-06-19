@@ -9,7 +9,7 @@ This dashboard visualizes mock sales data using charts, metrics, filters, and a 
 ### ✅ Project Setup
 - **Tech Stack**: React 18, TypeScript, Vite, Tailwind CSS, Recharts, Lucide Icons
 - **Architecture**: Component-driven design with clear folder separation (`charts`, `dashboard`,`filters`,`layout`, `ui`)
-- **Data Handling**: Created a reusable `useFilters` custom hook to manage filter state and memoized data transformations
+- **Data Handling**: Used a reusable `useFilters` custom hook to manage filter state and memoized data transformations
 
 ### 📈 Data Visualization
 - **Metric Cards**: Displays total sales, total orders, AOV, and top month
